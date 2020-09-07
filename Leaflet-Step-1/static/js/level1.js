@@ -43,3 +43,82 @@ const dark = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}
   }
 
 legend.addTo(myMap);
+
+// Create a function for marker colors
+
+// var color = function(sig) {
+//   if (sig < 250) {
+//     return 'white';
+//   }
+//   else if (sig < 500 && sig > 250) {
+//     return 'yellow';
+//   }
+//   else if (sig < 750 && sig > 500) {
+//     return 'orange';
+//   }
+//   else if (sig < 1000 && sig > 750) {
+//     return 'red';
+//   }
+//   else if (sig > 1000) {
+//     return 'magenta';
+//   }
+// }
+
+
+// Load json data to plot markers
+
+d3.json('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_month.geojson').then(data => {
+    var features = data.features
+
+    features.forEach(feature => {
+      var mag = feature.properties.mag
+      var sig = feature.properties.sig
+      var time = feature.properties.time
+      var place = feature.properties.place
+      var coord = [feature.geometry.coordinates[1], feature.geometry.coordinates[0]] 
+
+  // Conditionals for marker color
+  let color = '';
+
+  if (sig < 250) {
+    color = 'white';
+  }
+  else if (sig < 500 && sig > 250) {
+    color = 'yellow';
+  }
+  else if (sig < 750 && sig > 500) {
+    color =  'orange';
+  }
+  else if (sig < 1000 && sig > 750) {
+    color =  'red';
+  }
+  else {
+    color =  'magenta';
+  }
+
+  // Conditionals for marker size
+
+  let markerSize = '';
+
+  if (mag < 2) {
+    markerSize = mag * 500;
+  }
+  else if (mag < 3 && mag > 2) {
+    markerSize = mag * 1000;
+  }
+  else if (mag < 4 && mag > 3) {
+    markerSize = mag * 2000;
+  }
+  else {
+    markerSize = mag * 4000;
+  }
+
+  var marker = L.circle(coord, {
+    color: color,
+    radius: markerSize
+  });
+
+  marker.addTo(myMap);
+    })
+  }
+)
